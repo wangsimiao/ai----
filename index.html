@@ -227,16 +227,18 @@
     }
 
     .leader-blue {
-      color: #1b2738;
+      color: var(--ink);
       background:
-        linear-gradient(90deg, rgba(12, 76, 156, 0.08) 1px, transparent 1px),
-        linear-gradient(rgba(12, 76, 156, 0.08) 1px, transparent 1px),
-        #f4f7fb;
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        radial-gradient(circle at 82% 12%, rgba(80, 243, 255, 0.16), transparent 24%),
+        radial-gradient(circle at 18% 86%, rgba(216, 255, 101, 0.09), transparent 26%),
+        rgba(7, 8, 10, 0.96);
       background-size: 36px 36px;
     }
 
     .leader-blue::before {
-      color: #0b4c9c;
+      color: var(--cyan);
       font-weight: 800;
     }
 
@@ -248,7 +250,7 @@
       position: absolute;
       right: 6%;
       top: 6.2%;
-      color: #29415e;
+      color: rgba(246,248,251,0.82);
       font-weight: 900;
       font-size: clamp(13px, 1vw, 18px);
       letter-spacing: 0;
@@ -256,12 +258,12 @@
 
     .ref-logo span {
       margin-left: 14px;
-      color: #9b1e2d;
+      color: var(--rose);
     }
 
     .ref-title {
       margin: 5.8% 0 0;
-      color: #111827;
+      color: #fff;
       font-size: clamp(28px, 2.55vw, 46px);
       line-height: 1.1;
       font-weight: 900;
@@ -270,7 +272,7 @@
     .ref-kicker {
       display: block;
       margin-bottom: 8px;
-      color: #34495e;
+      color: var(--cyan);
       font-family: var(--mono);
       font-size: clamp(11px, 0.9vw, 14px);
       letter-spacing: 0.04em;
@@ -281,9 +283,11 @@
       position: relative;
       margin-top: 2.8%;
       min-height: 65%;
-      border: 2px solid rgba(17, 24, 39, 0.6);
-      background: rgba(255,255,255,0.72);
-      box-shadow: 0 22px 50px rgba(31, 58, 98, 0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      background:
+        linear-gradient(145deg, rgba(255,255,255,0.09), rgba(255,255,255,0.025)),
+        rgba(0,0,0,0.22);
+      box-shadow: 0 22px 60px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,255,255,0.08);
     }
 
     .opp-ref {
@@ -298,8 +302,8 @@
       display: grid;
       place-items: center;
       width: 42px;
-      border-left: 1px solid #c7d2df;
-      color: #34495e;
+      border-left: 1px solid rgba(255,255,255,0.22);
+      color: rgba(246,248,251,0.72);
       font-size: clamp(11px, 0.86vw, 14px);
       writing-mode: vertical-rl;
       letter-spacing: 0.08em;
@@ -326,9 +330,9 @@
       box-shadow: 0 10px 22px rgba(6, 58, 116, 0.2);
     }
 
-    .opp-bar.top { width: 66%; margin-right: 12%; background: linear-gradient(180deg, #003a86, #002e70); }
-    .opp-bar.mid { width: 82%; margin-right: 5%; background: linear-gradient(180deg, #0b70bb, #065a9b); }
-    .opp-bar.base { width: 96%; background: linear-gradient(180deg, #77b8db, #4b98c5); }
+    .opp-bar.top { width: 66%; margin-right: 12%; background: linear-gradient(180deg, #0b4da2, #07306f); }
+    .opp-bar.mid { width: 82%; margin-right: 5%; background: linear-gradient(180deg, #087ac0, #075a9c); }
+    .opp-bar.base { width: 96%; background: linear-gradient(180deg, #5bb8e6, #2c83b8); }
 
     .opp-icon {
       display: grid;
@@ -357,8 +361,8 @@
     .opp-pill {
       padding: 8px 13px;
       border-radius: 999px;
-      color: #16304f;
-      background: rgba(255,255,255,0.86);
+      color: #06101d;
+      background: rgba(216,255,101,0.9);
       font-size: 12px;
       font-weight: 900;
       white-space: nowrap;
@@ -369,7 +373,7 @@
       left: 0;
       right: 0;
       bottom: 14px;
-      color: #4b5563;
+      color: rgba(246,248,251,0.62);
       text-align: center;
       font-size: 11px;
     }
@@ -394,8 +398,8 @@
       right: 0;
       bottom: 11%;
       height: 28%;
-      border-bottom: 18px solid #0a5ea8;
-      border-right: 26px solid #0a5ea8;
+      border-bottom: 18px solid rgba(80,243,255,0.78);
+      border-right: 26px solid rgba(80,243,255,0.78);
       border-radius: 0 0 80% 80%;
       transform: skewX(-16deg);
       opacity: 0.95;
@@ -407,8 +411,8 @@
       z-index: 1;
       min-height: 210px;
       padding-left: 14px;
-      border-left: 2px solid #7a8796;
-      color: #111827;
+      border-left: 2px solid rgba(255,255,255,0.32);
+      color: var(--ink);
     }
 
     .path-step:nth-child(1) { transform: translateY(58px); }
@@ -425,29 +429,30 @@
       margin-bottom: 18px;
       border-radius: 999px;
       color: #fff;
-      background: #0d64ad;
-      box-shadow: 0 4px 12px rgba(13, 100, 173, 0.28);
+      background: linear-gradient(180deg, #0d7bd1, #0a5799);
+      box-shadow: 0 4px 18px rgba(80,243,255,0.22);
       font-weight: 900;
     }
 
     .path-step h3 {
       margin: 0 0 12px;
-      color: #1f2937;
+      color: #fff;
       font-size: clamp(17px, 1.35vw, 24px);
       font-weight: 900;
     }
 
     .path-step p {
       margin: 0;
-      color: #374151;
+      color: rgba(246,248,251,0.74);
       font-size: clamp(10px, 0.78vw, 13px);
       line-height: 1.55;
     }
 
     .concept-cover {
       margin-top: 5.6%;
-      border: 2px solid rgba(17, 24, 39, 0.5);
-      background: #fff;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.22);
+      box-shadow: 0 20px 56px rgba(0,0,0,0.3);
     }
 
     .concept-banner {
@@ -456,8 +461,8 @@
       height: 225px;
       color: #fff;
       background:
-        linear-gradient(180deg, rgba(23, 69, 122, 0.94), rgba(15, 82, 148, 0.9)),
-        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.18), transparent 30%);
+        linear-gradient(180deg, rgba(19, 82, 157, 0.95), rgba(10, 61, 125, 0.94)),
+        radial-gradient(circle at 20% 20%, rgba(80,243,255,0.18), transparent 30%);
       font-size: clamp(46px, 5.6vw, 92px);
       font-weight: 900;
       text-shadow: 0 4px 12px rgba(0,0,0,0.28);
@@ -467,10 +472,10 @@
       display: grid;
       place-items: center;
       height: 84px;
-      color: #1f2937;
+      color: rgba(246,248,251,0.9);
       font-size: clamp(18px, 1.6vw, 28px);
       font-weight: 700;
-      background: #f8fafc;
+      background: rgba(255,255,255,0.05);
     }
 
     .concept-ref {
@@ -479,14 +484,14 @@
 
     .concept-ref h2 {
       margin: 0 0 4px;
-      color: #111827;
+      color: #fff;
       font-size: clamp(24px, 2.1vw, 38px);
       font-weight: 900;
     }
 
     .concept-ref > p {
       margin: 0 0 24px;
-      color: #374151;
+      color: rgba(246,248,251,0.72);
       font-size: clamp(12px, 0.9vw, 15px);
     }
 
@@ -508,22 +513,22 @@
       gap: 14px;
       min-height: 118px;
       padding: 18px;
-      border: 2px solid #b8c1cc;
+      border: 1px solid rgba(255,255,255,0.18);
       border-radius: 12px;
-      color: #1f2937;
-      background: #fff;
+      color: var(--ink);
+      background: rgba(255,255,255,0.07);
     }
 
     .concept-box strong {
       display: block;
       margin-bottom: 6px;
-      color: #111827;
+      color: #fff;
       font-size: clamp(17px, 1.3vw, 24px);
     }
 
     .concept-box p {
       margin: 0;
-      color: #374151;
+      color: rgba(246,248,251,0.72);
       font-size: clamp(11px, 0.84vw, 14px);
       line-height: 1.5;
     }
@@ -535,12 +540,12 @@
       height: 42px;
       border-radius: 8px;
       color: #fff;
-      background: #174f93;
+      background: #0b70bb;
       font-size: 22px;
     }
 
     .concept-arrow {
-      color: #0a5ea8;
+      color: var(--cyan);
       font-size: clamp(72px, 7vw, 128px);
       font-weight: 900;
       text-align: center;
@@ -551,28 +556,28 @@
       grid-template-columns: repeat(2, 1fr);
       gap: 14px;
       padding: 18px;
-      border: 2px solid #9aa7b7;
-      background: #f7f9fc;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.055);
     }
 
     .employee-item {
       min-height: 108px;
       padding: 14px;
-      color: #1f2937;
-      background: #eef3f8;
-      border: 1px solid #d0d9e4;
+      color: var(--ink);
+      background: rgba(0,0,0,0.22);
+      border: 1px solid rgba(255,255,255,0.14);
     }
 
     .employee-item h3 {
       margin: 0 0 8px;
-      color: #174f93;
+      color: var(--cyan);
       font-size: clamp(15px, 1.12vw, 20px);
       font-weight: 900;
     }
 
     .employee-item p {
       margin: 0;
-      color: #374151;
+      color: rgba(246,248,251,0.72);
       font-size: clamp(10px, 0.78vw, 13px);
       line-height: 1.45;
     }
