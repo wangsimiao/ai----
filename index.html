@@ -1111,7 +1111,7 @@
 
     .prompt-v3 {
       margin-top: 0.8%;
-      padding: 11px 14px;
+      padding: 14px 16px;
       border: 1px solid rgba(216,255,101,0.25);
       border-radius: 10px;
       background: rgba(0,0,0,0.24);
@@ -1122,14 +1122,14 @@
       margin-bottom: 6px;
       color: var(--lime);
       font-family: var(--mono);
-      font-size: 11px;
+      font-size: clamp(13px, 0.95vw, 16px);
     }
 
     .prompt-v3 p {
       margin: 0;
       color: #f5f8ff;
-      font-size: clamp(10px, 0.72vw, 12px);
-      line-height: 1.35;
+      font-size: clamp(17px, 1.2vw, 22px);
+      line-height: 1.38;
     }
 
     .case-output-v3 {
@@ -1540,7 +1540,7 @@
       </article>
 
       <article class="slide" data-title="破冰" data-chapter="AI生图 | 举手破冰" data-kicker="破冰举手 / 05">
-        <h2 class="h2">先举个手：<br>这些 AI 生图问题<span class="rose">你遇到过吗？</span></h2>
+        <h2 class="h2">先举个手：这些 AI 生图问题<span class="rose">你遇到过吗？</span></h2>
         <div class="raise-wall">
           <div class="raise-list">
             <div class="raise-q">
@@ -1561,8 +1561,7 @@
       </article>
 
       <article class="slide" data-title="少学习少切换少抽卡少加班" data-chapter="AI生图 | 用户价值" data-kicker="用户价值 / 06">
-        <h2 class="h2">少学习，少切换，少抽卡，少加班<br><span class="accent">把 AI 生图变成可依赖的工作流</span></h2>
-        <p class="lead">用户价值不是“又多一个工具”，而是把模型选择、工具入口、出图试错和等待时间都往系统里收。</p>
+        <h2 class="h2">少学习，少切换，少抽卡，少加班<span class="accent">把 AI 生图变成可依赖的工作流</span></h2>
         <div class="value-grid">
           <section class="value-card"><h3 class="value-title"><span>少学习</span></h3><p class="value-copy">把最好的模型集成在系统中；根据大家使用习惯快速调整。</p><div class="shot-grid learning"><div class="shot-placeholder" data-label="SYSTEM / 最佳模型集成"><span class="shot-caption">模型入口示意</span></div><div class="shot-row"><div class="shot-placeholder" data-label="USAGE 01"><span class="shot-caption">常用场景入口</span></div><div class="shot-placeholder" data-label="USAGE 02"><span class="shot-caption">快速调整记录</span></div></div></div></section>
           <section class="value-card"><h3 class="value-title"><span>少切换</span></h3><p class="value-copy">不用在多个工具之间来回找入口、传素材、调参数，从统一入口按业务场景开始。</p><div class="shot-placeholder" data-label="ENTRY / 统一工具入口"><span class="shot-caption">工具入口聚合示意</span></div></section>
@@ -1585,7 +1584,6 @@
 
       <article class="slide" data-title="场景案例" data-chapter="AI生图 | 高频场景" data-kicker="高频场景 / 08">
         <h2 class="h2">8 个高频场景：<br><span class="accent">先把最常见的图跑稳</span></h2>
-        <p class="lead">这些不是功能菜单截图，而是最容易先跑起来的业务场景。</p>
         <div class="scenario-grid">
           <div class="scenario"><div class="scenario-visual has-image" data-case-base="assets/cases/01-shuchu1"></div><h3>商品替换</h3><p>替换商品、背景和搭配物。</p></div>
           <div class="scenario"><div class="scenario-visual has-image" data-case-base="assets/cases/02-shuchu1"></div><h3>画芯替换</h3><p>把图案替换进商品结构。</p></div>
@@ -1623,14 +1621,14 @@
       <article class="slide case-v3" data-title="买家秀" data-chapter="35-48 分钟 | 场景 4" data-kicker="场景 4 / 买家秀">
         <div class="case-titlebar"><div><h2>买家秀</h2></div><p>不是精修海报，而是更像真实使用场景的内容补图。</p></div>
         <div class="prompt-v3"><b>输入提示词</b><p>生成自然生活感买家秀，保留商品真实细节，避免过度精修。</p></div>
-        <div class="case-board-v3"><aside class="case-source-v3"><div class="case-label">输入素材</div><div class="source-stack-v3"><figure class="source-card-v3"><div class="source-photo-v3 is-wide-input" data-source-base="assets/cases/04-shuru1"></div><figcaption><b>使用场景</b>真实空间和氛围。</figcaption></figure><figure class="source-card-v3"><div class="source-photo-v3" data-source-base="assets/cases/04-shuru2"></div><figcaption><b>商品参考</b>保持商品外观一致。</figcaption></figure></div></aside><section class="case-output-v3"><div class="output-head-v3"><span>OUTPUT / 买家秀候选</span><span>完整展示</span></div><div class="commerce-long-v3" data-case-base="assets/cases/04-shuchu1"></div></section></div>
+        <div class="case-board-v3"><aside class="case-source-v3"><div class="case-label">输入素材</div><div class="source-stack-v3 single"><figure class="source-card-v3"><div class="source-photo-v3 is-wide-input" data-source-base="assets/cases/04-shuru1"></div><figcaption><b>使用场景</b>真实空间、商品细节和氛围。</figcaption></figure></div></aside><section class="case-output-v3"><div class="output-head-v3"><span>OUTPUT / 买家秀候选</span><span>完整展示</span></div><div class="commerce-long-v3" data-case-base="assets/cases/04-shuchu1"></div></section></div>
         <div class="speaker-note"><p>强调真实感和业务可用之间的平衡。</p></div>
       </article>
 
       <article class="slide case-v3" data-title="瑕疵修复" data-chapter="35-48 分钟 | 场景 5" data-kicker="场景 5 / 瑕疵修复">
         <div class="case-titlebar"><div><h2>瑕疵修复</h2></div><p>小问题别拖成大返工，先局部修复，不必整张重跑。</p></div>
         <div class="prompt-v3"><b>输入提示词</b><p>去除水印、修复局部穿帮，并保持材质和花型连续。</p></div>
-        <div class="case-board-v3"><aside class="case-source-v3"><div class="case-label">输入素材</div><div class="source-stack-v3"><figure class="source-card-v3"><div class="source-photo-v3" data-source-base="assets/cases/05-shuru1"></div><figcaption><b>问题图</b>明确修复区域。</figcaption></figure><figure class="source-card-v3"><div class="source-photo-v3" data-source-base="assets/cases/05-shuru2"></div><figcaption><b>材质参考</b>纹理和边缘依据。</figcaption></figure></div></aside><section class="case-output-v3"><div class="output-head-v3"><span>OUTPUT / 修复后候选</span><span>完整展示</span></div><div class="commerce-long-v3" data-case-base="assets/cases/05-shuchu1"></div></section></div>
+        <div class="case-board-v3"><aside class="case-source-v3"><div class="case-label">输入素材</div><div class="source-stack-v3 single"><figure class="source-card-v3"><div class="source-photo-v3" data-source-base="assets/cases/05-shuru1"></div><figcaption><b>问题图</b>明确修复区域、纹理和边缘依据。</figcaption></figure></div></aside><section class="case-output-v3"><div class="output-head-v3"><span>OUTPUT / 修复后候选</span><span>完整展示</span></div><div class="commerce-long-v3" data-case-base="assets/cases/05-shuchu1"></div></section></div>
         <div class="speaker-note"><p>不是所有图都救，能交付的候选才进入修复。</p></div>
       </article>
 
@@ -1829,4 +1827,3 @@
   </script>
 </body>
 </html>
-
