@@ -1,0 +1,1551 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>众唯 AI 生图培训</title>
+  <style>
+    :root {
+      --bg: #07080a;
+      --panel: rgba(250, 252, 255, 0.08);
+      --panel-strong: rgba(250, 252, 255, 0.14);
+      --ink: #f6f8fb;
+      --muted: #a9b2c4;
+      --line: rgba(246, 248, 251, 0.18);
+      --cyan: #50f3ff;
+      --lime: #d8ff65;
+      --rose: #ff5f8e;
+      --violet: #a78bfa;
+      --amber: #ffcc66;
+      --green: #69f0ae;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+      --radius: 8px;
+      --font: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", Arial, sans-serif;
+      --mono: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font);
+      letter-spacing: 0;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px),
+        radial-gradient(circle at 18% 14%, rgba(80, 243, 255, 0.18), transparent 28%),
+        radial-gradient(circle at 84% 20%, rgba(255, 95, 142, 0.14), transparent 26%),
+        radial-gradient(circle at 70% 90%, rgba(216, 255, 101, 0.1), transparent 30%),
+        #07080a;
+      background-size: 44px 44px, 44px 44px, auto, auto, auto, auto;
+      pointer-events: none;
+    }
+
+    .deck {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      width: 100vw;
+      height: 100vh;
+      padding: clamp(12px, 2vw, 28px);
+    }
+
+    .stage {
+      position: relative;
+      width: min(100vw - 28px, calc((100vh - 28px) * 16 / 9));
+      aspect-ratio: 16 / 9;
+      max-height: calc(100vh - 28px);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 8px;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.09), rgba(255,255,255,0.015)),
+        rgba(8, 10, 14, 0.92);
+      box-shadow: var(--shadow), inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      padding: 5.1% 5.8% 7.4%;
+      isolation: isolate;
+    }
+
+    .slide.active {
+      display: block;
+      animation: slideIn 420ms cubic-bezier(.2,.8,.2,1) both;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(14px) scale(0.992); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .slide::before {
+      content: attr(data-kicker);
+      position: absolute;
+      top: 4.2%;
+      left: 5.8%;
+      color: var(--cyan);
+      font-family: var(--mono);
+      font-size: clamp(10px, 0.95vw, 15px);
+      opacity: 0.9;
+    }
+
+    .slide::after {
+      content: "";
+      position: absolute;
+      right: -12%;
+      bottom: -28%;
+      width: 54%;
+      aspect-ratio: 1;
+      border: 1px solid rgba(80, 243, 255, 0.22);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(80,243,255,0.11), transparent 58%);
+      z-index: -1;
+    }
+
+    .h1 {
+      margin: 4.5% 0 1.6%;
+      max-width: 82%;
+      font-size: clamp(42px, 5.3vw, 94px);
+      line-height: 0.98;
+      font-weight: 900;
+    }
+
+    .h2 {
+      margin: 4.2% 0 1.4%;
+      max-width: 84%;
+      font-size: clamp(30px, 3.8vw, 66px);
+      line-height: 1.05;
+      font-weight: 880;
+    }
+
+    .lead {
+      max-width: 66%;
+      color: var(--muted);
+      font-size: clamp(15px, 1.32vw, 23px);
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .accent { color: var(--lime); }
+    .rose { color: var(--rose); }
+    .cyan { color: var(--cyan); }
+
+    .mini-note {
+      position: absolute;
+      right: 5.8%;
+      top: 4.2%;
+      color: rgba(255,255,255,0.64);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    .panel {
+      border: 1px solid rgba(255,255,255,0.16);
+      background: var(--panel);
+      backdrop-filter: blur(18px);
+      border-radius: var(--radius);
+      padding: clamp(16px, 1.55vw, 28px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    .panel.dark { background: rgba(0,0,0,0.22); }
+
+    .panel-title {
+      margin: 0 0 14px;
+      color: #fff;
+      font-size: clamp(16px, 1.45vw, 25px);
+      font-weight: 860;
+    }
+
+    .panel-copy {
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(13px, 1.05vw, 18px);
+      line-height: 1.55;
+    }
+
+    .agenda-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 3%;
+      max-width: 88%;
+    }
+
+    .agenda-item {
+      display: grid;
+      grid-template-columns: 74px 1fr 160px;
+      align-items: center;
+      gap: 14px;
+      min-height: 48px;
+      padding: 9px 12px;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.065);
+    }
+
+    .agenda-item.subitem {
+      min-height: 38px;
+      margin-left: 34px;
+      background: rgba(255,255,255,0.045);
+    }
+
+    .agenda-time {
+      color: var(--cyan);
+      font-family: var(--mono);
+      font-size: clamp(11px, 0.95vw, 15px);
+    }
+
+    .agenda-name {
+      color: #fff;
+      font-weight: 800;
+      font-size: clamp(13px, 1.05vw, 18px);
+      line-height: 1.25;
+    }
+
+    .speaker {
+      color: var(--muted);
+      font-size: clamp(10px, 0.82vw, 14px);
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    .leader-blue {
+      background:
+        radial-gradient(circle at 84% 8%, rgba(80, 243, 255, 0.2), transparent 22%),
+        linear-gradient(180deg, rgba(9, 46, 95, 0.95), rgba(8, 12, 18, 0.92));
+    }
+
+    .opportunity-stack,
+    .path-cards,
+    .employee-grid {
+      display: grid;
+      gap: 13px;
+      margin-top: 3%;
+    }
+
+    .opportunity-stack { max-width: 78%; }
+    .path-cards { grid-template-columns: repeat(5, 1fr); }
+    .employee-grid { grid-template-columns: repeat(2, 1fr); max-width: 58%; margin-left: auto; margin-top: -22%; }
+
+    .opp-layer,
+    .path-card,
+    .employee-item {
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: var(--radius);
+      padding: 16px;
+      background: rgba(255,255,255,0.07);
+    }
+
+    .opp-layer {
+      display: grid;
+      grid-template-columns: 44px 1fr auto;
+      align-items: center;
+      gap: 14px;
+      min-height: 74px;
+    }
+
+    .opp-icon,
+    .path-num {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      color: #081014;
+      background: var(--lime);
+      font-family: var(--mono);
+      font-weight: 900;
+    }
+
+    .opp-title,
+    .path-card h3,
+    .employee-item h3 {
+      margin: 0 0 6px;
+      color: #fff;
+      font-size: clamp(16px, 1.35vw, 24px);
+      font-weight: 850;
+    }
+
+    .opp-sub,
+    .path-card p,
+    .employee-item p {
+      display: block;
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(11px, 0.9vw, 15px);
+      line-height: 1.45;
+    }
+
+    .opp-level {
+      color: var(--cyan);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    .concept-hero {
+      margin-top: 3%;
+      display: grid;
+      grid-template-columns: 0.42fr 60px 1fr;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .concept-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .concept-box {
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: var(--radius);
+      padding: 18px;
+      background: rgba(255,255,255,0.07);
+    }
+
+    .concept-box strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--lime);
+      font-size: clamp(18px, 1.6vw, 28px);
+    }
+
+    .concept-box p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .concept-arrow {
+      color: var(--cyan);
+      font-family: var(--mono);
+      font-size: clamp(36px, 4vw, 70px);
+      font-weight: 900;
+    }
+
+    .takeaway-slide .h2 {
+      margin-top: 3.5%;
+      margin-bottom: 0.8%;
+      max-width: 100%;
+      font-size: clamp(28px, 3.35vw, 58px);
+    }
+
+    .takeaway-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.68fr) minmax(0, 0.68fr) minmax(0, 1.64fr);
+      gap: 10px;
+      margin-top: 2%;
+      height: 82%;
+    }
+
+    .takeaway-card {
+      position: relative;
+      min-height: 0;
+      margin: 0;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: var(--radius);
+      background: rgba(0,0,0,0.24);
+    }
+
+    .takeaway-shot {
+      position: absolute;
+      inset: 0;
+      background:
+        var(--case-img),
+        radial-gradient(circle at 30% 24%, rgba(216,255,101,0.18), transparent 30%),
+        linear-gradient(135deg, rgba(80,243,255,0.18), rgba(255,95,142,0.12));
+      background-color: rgba(0,0,0,0.3);
+      background-size: contain, auto, auto;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .takeaway-card.is-wide .takeaway-shot {
+      background-size: auto 92%, auto, auto;
+    }
+
+    .takeaway-qr {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 2;
+      width: clamp(72px, 6.4vw, 112px);
+      aspect-ratio: 1;
+      border: 1px solid rgba(255,255,255,0.28);
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 16px 38px rgba(0,0,0,0.42);
+    }
+
+    .takeaway-card.is-wide .takeaway-qr {
+      top: 10px;
+      right: 10px;
+      width: clamp(64px, 5.4vw, 96px);
+    }
+
+    .takeaway-qr img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      padding: 7px;
+      object-fit: contain;
+    }
+
+    .takeaway-qr::after {
+      content: attr(data-label);
+      position: absolute;
+      left: 50%;
+      bottom: -24px;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      color: rgba(255,255,255,0.9);
+      font-size: clamp(9px, 0.66vw, 12px);
+      font-weight: 780;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.75);
+    }
+
+    .raise-wall {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 3%;
+      height: 72%;
+    }
+
+    .raise-list {
+      display: grid;
+      grid-template-rows: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .raise-q {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 12px;
+      align-items: stretch;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      padding: 12px;
+    }
+
+    .raise-copy {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .raise-index {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      color: #081014;
+      background: var(--cyan);
+      border-radius: 50%;
+      font-family: var(--mono);
+      font-weight: 900;
+    }
+
+    .raise-text {
+      color: #f7fbff;
+      font-size: clamp(13px, 0.95vw, 17px);
+      line-height: 1.34;
+      font-weight: 760;
+    }
+
+    .ice-panel {
+      height: 100%;
+      padding: 12px;
+    }
+
+    .ice-panel-title {
+      margin: 0 0 8px;
+      color: var(--cyan);
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+
+    .tool-logo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .tool-logo {
+      display: grid;
+      place-items: center;
+      gap: 5px;
+      min-height: 54px;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 10px;
+      background: rgba(0,0,0,0.18);
+      font-size: 12px;
+      font-weight: 780;
+    }
+
+    .return-card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      height: calc(100% - 28px);
+    }
+
+    .return-card {
+      display: grid;
+      grid-template-rows: 1fr auto;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 10px;
+      overflow: hidden;
+      background: rgba(0,0,0,0.2);
+    }
+
+    .return-shot,
+    .scenario-visual {
+      background:
+        radial-gradient(circle at 38% 28%, rgba(255,255,255,0.28), transparent 22%),
+        linear-gradient(145deg, rgba(80,243,255,0.18), rgba(216,255,101,0.08)),
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.08) 0 8px, transparent 8px 16px);
+    }
+
+    .return-card span {
+      padding: 9px 10px;
+      background: rgba(0,0,0,0.26);
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .schedule-visual {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 10px;
+      height: calc(100% - 28px);
+    }
+
+    .schedule-board,
+    .schedule-note {
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 10px;
+      background: rgba(0,0,0,0.2);
+    }
+
+    .schedule-board {
+      display: grid;
+      grid-template-rows: repeat(4, 1fr);
+      gap: 6px;
+      padding: 9px;
+    }
+
+    .schedule-row {
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      align-items: center;
+      gap: 7px;
+      color: rgba(255,255,255,0.78);
+      font-family: var(--mono);
+      font-size: 10px;
+    }
+
+    .schedule-row::after {
+      content: "";
+      height: 10px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(255,95,142,0.72), rgba(216,255,101,0.45));
+    }
+
+    .schedule-note {
+      display: grid;
+      align-content: center;
+      gap: 8px;
+      padding: 12px;
+    }
+
+    .schedule-note strong {
+      color: var(--lime);
+      font-size: clamp(18px, 1.5vw, 28px);
+    }
+
+    .schedule-note span {
+      color: #f6f9ff;
+      font-size: clamp(12px, 0.9vw, 15px);
+      line-height: 1.35;
+      font-weight: 760;
+    }
+
+    .value-grid {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr 0.92fr;
+      gap: 14px;
+      margin-top: 2.5%;
+      height: 66%;
+    }
+
+    .value-card {
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 12px;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: var(--radius);
+      padding: 18px;
+      background: rgba(255,255,255,0.075);
+    }
+
+    .value-title {
+      margin: 0;
+      color: #fff;
+      font-size: clamp(22px, 2.1vw, 38px);
+      font-weight: 900;
+    }
+
+    .value-title span { color: var(--cyan); }
+    .value-card:nth-child(2) .value-title span { color: var(--lime); }
+    .value-card:nth-child(3) .value-title span { color: var(--amber); }
+
+    .value-copy {
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(12px, 0.95vw, 16px);
+      line-height: 1.48;
+    }
+
+    .shot-grid {
+      display: grid;
+      grid-template-rows: 1fr;
+      gap: 9px;
+    }
+
+    .shot-grid.learning { grid-template-rows: 1.25fr 0.85fr; }
+
+    .shot-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      min-height: 0;
+    }
+
+    .shot-placeholder {
+      position: relative;
+      min-height: 92px;
+      border: 1px dashed rgba(255,255,255,0.28);
+      border-radius: 8px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.025)),
+        repeating-linear-gradient(135deg, rgba(255,255,255,0.07) 0 8px, transparent 8px 16px),
+        rgba(0,0,0,0.22);
+    }
+
+    .shot-placeholder::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 10px;
+      top: 9px;
+      color: rgba(255,255,255,0.78);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .shot-caption {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 9px;
+      color: rgba(255,255,255,0.9);
+      font-size: 12px;
+      line-height: 1.25;
+      font-weight: 760;
+    }
+
+    .quote-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 3%;
+    }
+
+    .quote-card {
+      min-height: 185px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: var(--radius);
+      padding: 20px;
+      background: linear-gradient(150deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+    }
+
+    .quote-mark {
+      font-family: var(--mono);
+      color: var(--lime);
+      font-size: clamp(28px, 3.3vw, 58px);
+      line-height: 0.8;
+    }
+
+    .quote-text {
+      margin: 16px 0 0;
+      color: #f5f7fb;
+      font-size: clamp(17px, 1.55vw, 28px);
+      line-height: 1.35;
+      font-weight: 820;
+    }
+
+    .quote-foot {
+      color: var(--muted);
+      font-size: clamp(12px, 1vw, 16px);
+      margin-top: 18px;
+    }
+
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 2.7%;
+    }
+
+    .scenario {
+      min-height: 165px;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: rgba(255,255,255,0.065);
+      padding: 14px;
+    }
+
+    .scenario.featured {
+      grid-column: span 2;
+      border-color: rgba(216,255,101,0.55);
+      background: linear-gradient(140deg, rgba(80,243,255,0.2), rgba(216,255,101,0.1)), rgba(255,255,255,0.075);
+    }
+
+    .scenario-visual {
+      height: 72px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background-size: cover;
+      background-position: center;
+    }
+
+    .scenario-visual.has-image {
+      background-image: var(--case-img);
+    }
+
+    .scenario h3 {
+      margin: 0 0 8px;
+      font-size: clamp(15px, 1.25vw, 22px);
+    }
+
+    .scenario p {
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(11px, 0.9vw, 15px);
+      line-height: 1.5;
+    }
+
+    .case-v3 .case-titlebar {
+      display: grid;
+      grid-template-columns: 0.42fr 0.58fr;
+      gap: 28px;
+      align-items: end;
+      margin-top: 0.7%;
+    }
+
+    .case-v3 .case-titlebar h2 {
+      margin: 4px 0 0;
+      color: var(--ink);
+      font-size: clamp(30px, 2.7vw, 50px);
+      line-height: 1.02;
+    }
+
+    .case-v3 .case-titlebar p {
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(14px, 1.05vw, 19px);
+      line-height: 1.42;
+    }
+
+    .case-board-v3 {
+      display: grid;
+      grid-template-columns: minmax(420px, 0.48fr) minmax(0, 0.52fr);
+      gap: 24px;
+      height: 76%;
+      margin-top: 0.8%;
+    }
+
+    .case-source-v3,
+    .case-output-v3 {
+      min-height: 0;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.055);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .case-source-v3 {
+      padding: 16px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 12px;
+    }
+
+    .case-label {
+      color: var(--lime);
+      font-family: var(--mono);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .source-stack-v3 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .source-stack-v3.single {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .source-card-v3 {
+      min-height: 0;
+      margin: 0;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 10px;
+      overflow: hidden;
+      background: rgba(0,0,0,0.2);
+    }
+
+    .source-photo-v3 {
+      min-height: 0;
+      background:
+        var(--source-img),
+        radial-gradient(circle at 28% 24%, rgba(80,243,255,0.26), transparent 28%),
+        linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.035));
+      background-size: contain, cover, cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      overflow: hidden;
+    }
+
+    .source-photo-v3.is-wide-input {
+      background-size: cover, cover, cover;
+    }
+
+    .source-card-v3 figcaption {
+      display: grid;
+      gap: 2px;
+      padding: 7px 9px 8px;
+      color: rgba(255,255,255,0.74);
+      font-size: clamp(10px, 0.72vw, 12px);
+      line-height: 1.28;
+    }
+
+    .source-card-v3 figcaption b {
+      color: #fff;
+      font-size: clamp(11px, 0.8vw, 13px);
+    }
+
+    .prompt-v3 {
+      margin-top: 0.8%;
+      padding: 11px 14px;
+      border: 1px solid rgba(216,255,101,0.25);
+      border-radius: 10px;
+      background: rgba(0,0,0,0.24);
+    }
+
+    .prompt-v3 b {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--lime);
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+
+    .prompt-v3 p {
+      margin: 0;
+      color: #f5f8ff;
+      font-size: clamp(10px, 0.72vw, 12px);
+      line-height: 1.35;
+    }
+
+    .case-output-v3 {
+      padding: 18px 20px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      justify-items: center;
+      background:
+        radial-gradient(circle at 52% 24%, rgba(216,255,101,0.1), transparent 24%),
+        linear-gradient(135deg, rgba(255,255,255,0.09), rgba(255,255,255,0.032));
+    }
+
+    .output-head-v3 {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: rgba(255,255,255,0.72);
+      font-size: 13px;
+      font-family: var(--mono);
+    }
+
+    .commerce-long-v3 {
+      align-self: center;
+      width: min(100%, 760px);
+      height: min(100%, 610px);
+      max-height: 610px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 14px;
+      background:
+        var(--case-img),
+        radial-gradient(circle at 50% 18%, rgba(255,255,255,0.18), transparent 26%),
+        linear-gradient(180deg, rgba(80,243,255,0.16), rgba(216,255,101,0.08) 46%, rgba(255,95,142,0.08));
+      background-size: contain, cover, cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      box-shadow:
+        0 28px 80px rgba(0,0,0,0.52),
+        0 0 0 12px rgba(255,255,255,0.035);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .commerce-long-v3.is-pending::before {
+      content: "输出图待生成";
+      position: absolute;
+      inset: 16px;
+      display: grid;
+      place-items: center;
+      border: 1px dashed rgba(255,255,255,0.22);
+      border-radius: 10px;
+      color: rgba(255,255,255,0.68);
+      background: rgba(0,0,0,0.12);
+      font-size: 14px;
+    }
+
+    .batch-board {
+      display: grid;
+      grid-template-columns: 1fr 1.05fr;
+      gap: 18px;
+      margin-top: 3%;
+      height: 62%;
+    }
+
+    .queue {
+      display: grid;
+      gap: 10px;
+    }
+
+    .queue-row {
+      display: grid;
+      grid-template-columns: 72px 1fr 88px;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      color: #fff;
+    }
+
+    .queue-id,
+    .queue-status {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    .bar {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.1);
+      overflow: hidden;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--cyan), var(--lime));
+    }
+
+    .review-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .thumb {
+      position: relative;
+      min-height: 120px;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 10px;
+      background:
+        radial-gradient(circle at 45% 32%, rgba(255,255,255,0.24), transparent 24%),
+        linear-gradient(135deg, rgba(80,243,255,0.18), rgba(255,95,142,0.12));
+    }
+
+    .thumb::after {
+      content: attr(data-state);
+      position: absolute;
+      left: 8px;
+      bottom: 8px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      color: #081014;
+      background: var(--lime);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .practice-layout.qr-only {
+      display: grid;
+      grid-template-columns: minmax(320px, 48%);
+      justify-content: center;
+      margin-top: 3%;
+    }
+
+    .share-qr-card {
+      min-height: 350px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 14px;
+      border: 1px solid rgba(216,255,101,0.28);
+      border-radius: var(--radius);
+      padding: 18px;
+      background:
+        linear-gradient(145deg, rgba(216,255,101,0.12), rgba(80,243,255,0.06)),
+        rgba(255,255,255,0.065);
+    }
+
+    .share-qr-card h3 {
+      margin: 0;
+      color: #fff;
+      font-size: clamp(17px, 1.3vw, 24px);
+      line-height: 1.2;
+    }
+
+    .qr-placeholder {
+      align-self: center;
+      justify-self: center;
+      width: min(100%, 210px);
+      aspect-ratio: 1;
+      border: 1px solid rgba(255,255,255,0.28);
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 22px 60px rgba(0,0,0,0.38);
+    }
+
+    .qr-placeholder img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      padding: 12px;
+      object-fit: contain;
+    }
+
+    .share-qr-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(12px, 0.92vw, 15px);
+      line-height: 1.45;
+    }
+
+    .speaker-note { display: none; }
+
+    .notes-toggle {
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      z-index: 10;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: var(--ink);
+      background: rgba(0,0,0,0.36);
+      cursor: pointer;
+    }
+
+    .notes-panel {
+      position: absolute;
+      right: 18px;
+      top: 58px;
+      z-index: 9;
+      width: min(360px, 34%);
+      max-height: 72%;
+      overflow: auto;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: var(--radius);
+      background: rgba(7,8,10,0.92);
+      transform: translateX(calc(100% + 30px));
+      transition: transform 220ms ease;
+    }
+
+    .notes-panel.open { transform: translateX(0); }
+    .notes-panel h2 { margin: 0 0 10px; font-size: 18px; }
+    .notes-panel p { color: var(--muted); line-height: 1.5; }
+
+    .nav-zone {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 18%;
+      z-index: 4;
+      cursor: pointer;
+    }
+
+    .nav-zone.left { left: 0; }
+    .nav-zone.right { right: 0; }
+
+    .hud {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 8;
+      display: grid;
+      grid-template-columns: 150px 1fr 150px;
+      gap: 14px;
+      align-items: center;
+      padding: 0 22px 14px;
+      color: rgba(255,255,255,0.68);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    .counter strong { color: var(--lime); font-size: 18px; }
+
+    .timeline {
+      display: grid;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .tick {
+      height: 5px;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.16);
+      cursor: pointer;
+    }
+
+    .tick.active { background: var(--lime); }
+    .tick.past { background: rgba(80,243,255,0.55); }
+
+    .chapter {
+      text-align: right;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 900px) {
+      .slide { padding: 6.5% 5.5% 10%; }
+      .h1, .h2, .lead { max-width: 100%; }
+      .agenda-item,
+      .case-board-v3,
+      .raise-q,
+      .value-grid,
+      .batch-board {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+      .path-cards,
+      .employee-grid,
+      .scenario-grid,
+      .quote-grid,
+      .takeaway-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck">
+    <section class="stage" aria-label="AI生图培训演示页">
+      <article class="slide active" data-title="总大纲" data-chapter="全场 | 培训总纲" data-kicker="培训总纲 / 00">
+        <div class="mini-note">领导AI情况 / 视觉AI生图</div>
+        <h1 class="h1">培训议程<br><span class="accent">从 AI 认知到视觉生产落地</span></h1>
+        <div class="agenda-list">
+          <div class="agenda-item"><div class="agenda-time">01</div><div class="agenda-name">AI个人提效与组织提效</div><div class="speaker">@罗智凌（bruce）</div></div>
+          <div class="agenda-item"><div class="agenda-time">02</div><div class="agenda-name">众唯 AI 生图：让高频图片需求更快进入可交付流程</div><div class="speaker">@王思邈（神医）</div></div>
+          <div class="agenda-item subitem"><div class="agenda-time">2.1</div><div class="agenda-name">你今天的收获：先看能做出来什么样的图</div><div class="speaker">结果预告</div></div>
+          <div class="agenda-item subitem"><div class="agenda-time">2.2</div><div class="agenda-name">破冰：AI 生图使用痛点</div><div class="speaker">痛点共识</div></div>
+          <div class="agenda-item subitem"><div class="agenda-time">2.3</div><div class="agenda-name">用户价值：为什么大家需要这个生图工具</div><div class="speaker">价值说明</div></div>
+          <div class="agenda-item subitem"><div class="agenda-time">2.4</div><div class="agenda-name">高频用户分享：@森屿 讲真实使用比例、一次可用率、优点和问题</div><div class="speaker">真实反馈</div></div>
+          <div class="agenda-item subitem"><div class="agenda-time">2.5</div><div class="agenda-name">8 个高频场景：商品替换、画芯替换、人物融合、买家秀、瑕疵修复、高清放大、扩图、多角度图</div><div class="speaker">场景拆解</div></div>
+          <div class="agenda-item subitem"><div class="agenda-time">2.6</div><div class="agenda-name">批量任务：无需盯电脑，等任务跑完回来选图</div><div class="speaker">少加班</div></div>
+          <div class="agenda-item subitem"><div class="agenda-time">2.7</div><div class="agenda-name">体验群：扫码进群，领取素材和后续练习入口</div><div class="speaker">持续体验</div></div>
+        </div>
+      </article>
+
+      <article class="slide leader-blue" data-title="三层机会论" data-chapter="领导AI情况 | 战略篇" data-kicker="战略篇 / 01">
+        <h2 class="h2">战略篇：<br><span class="accent">AI 的三层机会论</span></h2>
+        <p class="lead">AI 不只是一批工具，它会从个人提效开始，进入组织流程升级，最后改变商业模式。越往上，价值密度越高，革新难度也越高。</p>
+        <div class="opportunity-stack">
+          <div class="opp-layer"><div class="opp-icon">3</div><div><div class="opp-title">第三层：商业模式革新</div><span class="opp-sub">新服务 / 新产品 / 新增长曲线</span></div><div class="opp-level">Business</div></div>
+          <div class="opp-layer"><div class="opp-icon">2</div><div><div class="opp-title">第二层：组织流程升级</div><span class="opp-sub">SOP 自动化 / 系统化协同</span></div><div class="opp-level">System</div></div>
+          <div class="opp-layer"><div class="opp-icon">1</div><div><div class="opp-title">第一层：员工个人提效</div><span class="opp-sub">工具使用者 / 生产力倍增</span></div><div class="opp-level">Base</div></div>
+        </div>
+        <div class="speaker-note"><p>不要把它讲成概念课，要落到“个人、流程、模式”三层。</p></div>
+      </article>
+
+      <article class="slide leader-blue" data-title="应用路径" data-chapter="领导AI情况 | 普及路径" data-kicker="应用路径 / 02">
+        <h2 class="h2">系统化探索并普及<br><span class="accent">AI 应用的建议路径</span></h2>
+        <p class="lead">不要一上来就追最复杂的智能体。先理解大模型，再学会提示词，再搭智能体和工作流，最后沉淀成可复用的 Skill。</p>
+        <div class="path-cards">
+          <div class="path-card"><div class="path-num">1</div><h3>AI 大模型</h3><p>知道主流模型能做什么，适合什么场景。</p></div>
+          <div class="path-card"><div class="path-num">2</div><h3>提示词撰写</h3><p>把任务、边界、输出格式说清楚。</p></div>
+          <div class="path-card"><div class="path-num">3</div><h3>智能体搭建</h3><p>基于岗位场景创建个性化智能体。</p></div>
+          <div class="path-card"><div class="path-num">4</div><h3>工作流搭建</h3><p>把常见 SOP 变成可复用流程。</p></div>
+          <div class="path-card"><div class="path-num">5</div><h3>Skill 制作</h3><p>把成熟经验沉淀成岗位能力。</p></div>
+        </div>
+        <div class="speaker-note"><p>重点是“从认知到沉淀”，给后面的 AI 生图做铺垫。</p></div>
+      </article>
+
+      <article class="slide leader-blue" data-title="AI数字员工" data-chapter="领导AI情况 | 概念解析" data-kicker="概念解析 / 03">
+        <h2 class="h2">概念解析：<br><span class="accent">从 AI 大模型到 AI 数字员工</span></h2>
+        <p class="lead">大模型是聪明的大脑，但真正能落地的数字员工，还要有岗位知识、工作记忆、手脚工具和规范流程。</p>
+        <div class="concept-hero">
+          <div class="concept-card">
+            <div class="concept-box"><strong>AI 大模型</strong><p>像刚毕业的高智商博士，什么都会一点，但不懂你的生意、货品和内部流程。</p></div>
+            <div class="concept-box"><strong>AI 数字员工</strong><p>给博士配上手脚、企业知识和岗位 SOP，变成能嵌入公司协作的非实体员工。</p></div>
+          </div>
+          <div class="concept-arrow">→</div>
+          <div class="employee-grid">
+            <div class="employee-item"><h3>岗位沉淀</h3><p>知道这个岗位要处理什么问题。</p></div>
+            <div class="employee-item"><h3>工作记忆</h3><p>记住产品信息、品牌手册和项目背景。</p></div>
+            <div class="employee-item"><h3>手脚工具</h3><p>能调用工具，不只是聊天。</p></div>
+            <div class="employee-item"><h3>规范流程</h3><p>按工作流和 SOP 做事。</p></div>
+          </div>
+        </div>
+        <div class="speaker-note"><p>重点讲清楚大模型和数字员工的区别。</p></div>
+      </article>
+
+      <article class="slide takeaway-slide" data-title="你今天的收获" data-chapter="AI生图 | 收获预告" data-kicker="收获预告 / 04">
+        <h2 class="h2">你今天的收获：<span class="accent">能做出来什么样的图</span></h2>
+        <div class="takeaway-grid">
+          <figure class="takeaway-card">
+            <div class="takeaway-shot" data-case-base="assets/cases/00-01"></div>
+            <div class="takeaway-qr" data-label="扫码做一张炫酷朋友圈"><img src="assets/qr/takeaway-01.png" alt="扫码做一张炫酷朋友圈"></div>
+          </figure>
+          <figure class="takeaway-card">
+            <div class="takeaway-shot" data-case-base="assets/cases/00-02"></div>
+            <div class="takeaway-qr" data-label="扫码做一个旅游路线图"><img src="assets/qr/takeaway-02.png" alt="扫码做一个旅游路线图"></div>
+          </figure>
+          <figure class="takeaway-card is-wide">
+            <div class="takeaway-shot" data-case-base="assets/cases/00-03"></div>
+            <div class="takeaway-qr" data-label="扫码做一个商品主图"><img src="assets/qr/takeaway-03.png" alt="扫码做一个商品主图"></div>
+          </figure>
+        </div>
+        <div class="speaker-note"><p>先告诉大家今天能拿到什么结果感，再进入举手破冰。</p></div>
+      </article>
+
+      <article class="slide" data-title="破冰" data-chapter="AI生图 | 举手破冰" data-kicker="破冰举手 / 05">
+        <h2 class="h2">先举个手：<br>这些 AI 生图问题<span class="rose">你遇到过吗？</span></h2>
+        <div class="raise-wall">
+          <div class="raise-list">
+            <div class="raise-q">
+              <div class="raise-copy"><span class="raise-index">1</span><span class="raise-text">总说要学习 AI，但我真的没时间也没精力。工具入口还到处分散。</span></div>
+              <div class="panel ice-panel"><p class="ice-panel-title">QUESTION 1 / 工具入口</p><div class="tool-logo-grid"><div class="tool-logo">豆包</div><div class="tool-logo">Liblib</div><div class="tool-logo">Lovart</div><div class="tool-logo">MJ</div><div class="tool-logo">即梦</div><div class="tool-logo">PS</div></div></div>
+            </div>
+            <div class="raise-q">
+              <div class="raise-copy"><span class="raise-index">2</span><span class="raise-text">每天免费 100 张，看似很多，真正能用的很少，抽卡抽到心累。</span></div>
+              <div class="panel ice-panel"><p class="ice-panel-title">QUESTION 2 / 退回原因</p><div class="return-card-grid"><div class="return-card"><div class="return-shot"></div><span>AI 痕迹重</span></div><div class="return-card"><div class="return-shot"></div><span>不符合商品</span></div><div class="return-card"><div class="return-shot"></div><span>画芯不稳定</span></div></div></div>
+            </div>
+            <div class="raise-q">
+              <div class="raise-copy"><span class="raise-index">3</span><span class="raise-text">需求排期经常来不及，人还要一直盯着电脑等图。</span></div>
+              <div class="panel ice-panel"><p class="ice-panel-title">QUESTION 3 / 排期压力</p><div class="schedule-visual"><div class="schedule-board"><div class="schedule-row">MON</div><div class="schedule-row">WED</div><div class="schedule-row">FRI</div><div class="schedule-row">NEXT</div></div><div class="schedule-note"><strong>+7D</strong><span>需求已提，排期还在后面。</span></div></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="speaker-note"><p>这页让大家举手，决定后面痛点讲多深。</p></div>
+      </article>
+
+      <article class="slide" data-title="少学习少抽卡少加班" data-chapter="AI生图 | 用户价值" data-kicker="用户价值 / 06">
+        <h2 class="h2">少学习，少抽卡，少加班<br><span class="accent">把 AI 生图变成可依赖的工作流</span></h2>
+        <p class="lead">用户价值不是“又多一个工具”，而是把模型选择、出图试错和等待时间都往系统里收。</p>
+        <div class="value-grid">
+          <section class="value-card"><h3 class="value-title"><span>少学习</span></h3><p class="value-copy">把最好的模型集成在系统中；根据大家使用习惯快速调整。</p><div class="shot-grid learning"><div class="shot-placeholder" data-label="SCREENSHOT / 最佳模型集成"><span class="shot-caption">系统集成截图</span></div><div class="shot-row"><div class="shot-placeholder" data-label="USAGE 01"><span class="shot-caption">常用入口</span></div><div class="shot-placeholder" data-label="USAGE 02"><span class="shot-caption">快速调整</span></div></div></div></section>
+          <section class="value-card"><h3 class="value-title"><span>少抽卡</span></h3><p class="value-copy">从随机碰运气变成同一任务流里的稳定生成、对比和筛选。</p><div class="shot-row"><div class="shot-placeholder" data-label="BEFORE"><span class="shot-caption">随机抽卡</span></div><div class="shot-placeholder" data-label="AFTER"><span class="shot-caption">可控候选</span></div></div></section>
+          <section class="value-card"><h3 class="value-title"><span>少加班</span></h3><p class="value-copy">无需盯着电脑。一次安排 N 个生图任务，后台跑完，人回来集中选图。</p><div class="shot-placeholder" data-label="SCREENSHOT / 批量任务"><span class="shot-caption">多任务队列截图</span></div></section>
+        </div>
+        <div class="speaker-note"><p>用“三少”讲用户价值。</p></div>
+      </article>
+
+      <article class="slide" data-title="用户分享" data-chapter="AI生图 | 高频用户分享" data-kicker="用户分享 / 07">
+        <h2 class="h2">高频用户分享：<br><span class="accent">@森屿 真实使用反馈</span></h2>
+        <p class="lead">这一页不讲产品宣传，讲真实使用：覆盖多少需求，一次可用率如何，哪里好用，哪里还不够顺。</p>
+        <div class="quote-grid">
+          <div class="quote-card"><div><div class="quote-mark">%</div><p class="quote-text">日常工作里，多少图片需求可以先用它跑候选？</p></div><div class="quote-foot">覆盖比例</div></div>
+          <div class="quote-card"><div><div class="quote-mark">✓</div><p class="quote-text">跑出来的结果里，多少能直接用或轻修后交付？</p></div><div class="quote-foot">一次可用率</div></div>
+          <div class="quote-card"><div><div class="quote-mark">!</div><p class="quote-text">最省事的地方是什么？目前最别扭的地方是什么？</p></div><div class="quote-foot">优点与问题</div></div>
+        </div>
+        <div class="speaker-note"><p>让真实用户把可信度讲出来。</p></div>
+      </article>
+
+      <article class="slide" data-title="场景案例" data-chapter="AI生图 | 高频场景" data-kicker="高频场景 / 08">
+        <h2 class="h2">8 个高频场景：<br><span class="accent">先把最常见的图跑稳</span></h2>
+        <p class="lead">这些不是功能菜单截图，而是最容易先跑起来的业务场景。</p>
+        <div class="scenario-grid">
+          <div class="scenario featured"><div class="scenario-visual has-image" data-case-base="assets/cases/01-shuchu1"></div><h3>商品替换</h3><p>替换商品、背景和搭配物。</p></div>
+          <div class="scenario"><div class="scenario-visual has-image" data-case-base="assets/cases/02-shuchu1"></div><h3>画芯替换</h3><p>把图案替换进商品结构。</p></div>
+          <div class="scenario"><div class="scenario-visual has-image" data-case-base="assets/cases/03-shuchu1"></div><h3>人物融合</h3><p>人物和商品自然融合。</p></div>
+          <div class="scenario"><div class="scenario-visual has-image" data-case-base="assets/cases/04-shuchu1"></div><h3>买家秀</h3><p>生成更真实的使用感画面。</p></div>
+          <div class="scenario"><div class="scenario-visual has-image" data-case-base="assets/cases/05-shuchu1"></div><h3>瑕疵修复</h3><p>修复边缘、脏点和局部穿帮。</p></div>
+          <div class="scenario"><div class="scenario-visual has-image" data-case-base="assets/cases/06-shuchu1"></div><h3>高清放大</h3><p>细节图放大，适配详情页。</p></div>
+          <div class="scenario"><div class="scenario-visual has-image" data-case-base="assets/cases/07-shuchu1"></div><h3>扩图</h3><p>补出更完整的场景和构图。</p></div>
+          <div class="scenario"><div class="scenario-visual has-image" data-case-base="assets/cases/08-shuchu1"></div><h3>多角度图</h3><p>生成多视角素材。</p></div>
+        </div>
+        <div class="speaker-note"><p>画芯替换是重点，其他场景建立认知。</p></div>
+      </article>
+
+      <article class="slide case-v3" data-title="商品替换" data-chapter="35-48 分钟 | 场景 1" data-kicker="场景 1 / 商品替换">
+        <div class="case-titlebar"><div><h2>商品替换</h2></div><p>把旧商品图快速变成新商品场景图，适合大促、上新和临时改图。</p></div>
+        <div class="prompt-v3"><b>输入提示词</b><p>保留场景真实感，替换为目标商品，保持光影、材质和比例自然。</p></div>
+        <div class="case-board-v3"><aside class="case-source-v3"><div class="case-label">输入素材</div><div class="source-stack-v3"><figure class="source-card-v3"><div class="source-photo-v3" data-source-base="assets/cases/01-shuru1"></div><figcaption><b>原场景</b>空间、角度和光线参考。</figcaption></figure><figure class="source-card-v3"><div class="source-photo-v3" data-source-base="assets/cases/01-shuru2"></div><figcaption><b>目标商品</b>需要替换进画面的商品。</figcaption></figure></div></aside><section class="case-output-v3"><div class="output-head-v3"><span>OUTPUT / 商品替换候选</span><span>原图比例</span></div><div class="commerce-long-v3 is-pending" data-case-base="assets/cases/01-shuchu1"></div></section></div>
+        <div class="speaker-note"><p>讲替换不是贴图，重点是光影和比例一致。</p></div>
+      </article>
+
+      <article class="slide case-v3" data-title="画芯替换" data-chapter="35-48 分钟 | 场景 2" data-kicker="场景 2 / 画芯替换">
+        <div class="case-titlebar"><div><h2>画芯替换</h2></div><p>把目标画芯放进商品结构里，快速生成多方向候选。</p></div>
+        <div class="prompt-v3"><b>输入提示词</b><p>将目标画芯自然替换到商品中，保持透视、边缘和材质一致。</p></div>
+        <div class="case-board-v3"><aside class="case-source-v3"><div class="case-label">输入素材</div><div class="source-stack-v3"><figure class="source-card-v3"><div class="source-photo-v3" data-source-base="assets/cases/02-shuru1"></div><figcaption><b>商品结构</b>需要保留的商品外形。</figcaption></figure><figure class="source-card-v3"><div class="source-photo-v3 is-wide-input" data-source-base="assets/cases/02-shuru2"></div><figcaption><b>目标画芯</b>要替换进去的图案。</figcaption></figure></div></aside><section class="case-output-v3"><div class="output-head-v3"><span>OUTPUT / 画芯替换候选</span><span>原图比例</span></div><div class="commerce-long-v3" data-case-base="assets/cases/02-shuchu1"></div></section></div>
+        <div class="speaker-note"><p>重点讲边缘、透视和花型比例。</p></div>
+      </article>
+
+      <article class="slide case-v3" data-title="人物融合" data-chapter="35-48 分钟 | 场景 3" data-kicker="场景 3 / 人物融合">
+        <div class="case-titlebar"><div><h2>人物融合</h2></div><p>人物、商品和场景自然融合，用来补充种草图和情绪图。</p></div>
+        <div class="prompt-v3"><b>输入提示词</b><p>让人物和商品自然融合，保持光影统一、比例真实，不要明显 AI 痕迹。</p></div>
+        <div class="case-board-v3"><aside class="case-source-v3"><div class="case-label">输入素材</div><div class="source-stack-v3"><figure class="source-card-v3"><div class="source-photo-v3" data-source-base="assets/cases/03-shuru1"></div><figcaption><b>人物素材</b>姿态和使用情绪。</figcaption></figure><figure class="source-card-v3"><div class="source-photo-v3" data-source-base="assets/cases/03-shuru2"></div><figcaption><b>商品素材</b>需要融入画面的商品。</figcaption></figure></div></aside><section class="case-output-v3"><div class="output-head-v3"><span>OUTPUT / 人物融合候选</span><span>原图比例</span></div><div class="commerce-long-v3" data-case-base="assets/cases/03-shuchu1"></div></section></div>
+        <div class="speaker-note"><p>人物相关要强调自然和风险边界。</p></div>
+      </article>
+
+      <article class="slide case-v3" data-title="买家秀" data-chapter="35-48 分钟 | 场景 4" data-kicker="场景 4 / 买家秀">
+        <div class="case-titlebar"><div><h2>买家秀</h2></div><p>不是精修海报，而是更像真实使用场景的内容补图。</p></div>
+        <div class="prompt-v3"><b>输入提示词</b><p>生成自然生活感买家秀，保留商品真实细节，避免过度精修。</p></div>
+        <div class="case-board-v3"><aside class="case-source-v3"><div class="case-label">输入素材</div><div class="source-stack-v3"><figure class="source-card-v3"><div class="source-photo-v3 is-wide-input" data-source-base="assets/cases/04-shuru1"></div><figcaption><b>使用场景</b>真实空间和氛围。</figcaption></figure><figure class="source-card-v3"><div class="source-photo-v3" data-source-base="assets/cases/04-shuru2"></div><figcaption><b>商品参考</b>保持商品外观一致。</figcaption></figure></div></aside><section class="case-output-v3"><div class="output-head-v3"><span>OUTPUT / 买家秀候选</span><span>原图比例</span></div><div class="commerce-long-v3" data-case-base="assets/cases/04-shuchu1"></div></section></div>
+        <div class="speaker-note"><p>强调真实感和业务可用之间的平衡。</p></div>
+      </article>
+
+      <article class="slide case-v3" data-title="瑕疵修复" data-chapter="35-48 分钟 | 场景 5" data-kicker="场景 5 / 瑕疵修复">
+        <div class="case-titlebar"><div><h2>瑕疵修复</h2></div><p>小问题别拖成大返工，先局部修复，不必整张重跑。</p></div>
+        <div class="prompt-v3"><b>输入提示词</b><p>去除水印、修复局部穿帮，并保持材质和花型连续。</p></div>
+        <div class="case-board-v3"><aside class="case-source-v3"><div class="case-label">输入素材</div><div class="source-stack-v3"><figure class="source-card-v3"><div class="source-photo-v3" data-source-base="assets/cases/05-shuru1"></div><figcaption><b>问题图</b>明确修复区域。</figcaption></figure><figure class="source-card-v3"><div class="source-photo-v3" data-source-base="assets/cases/05-shuru2"></div><figcaption><b>材质参考</b>纹理和边缘依据。</figcaption></figure></div></aside><section class="case-output-v3"><div class="output-head-v3"><span>OUTPUT / 修复后候选</span><span>原图比例</span></div><div class="commerce-long-v3" data-case-base="assets/cases/05-shuchu1"></div></section></div>
+        <div class="speaker-note"><p>不是所有图都救，能交付的候选才进入修复。</p></div>
+      </article>
+
+      <article class="slide case-v3" data-title="高清放大" data-chapter="35-48 分钟 | 场景 6" data-kicker="场景 6 / 高清放大">
+        <div class="case-titlebar"><div><h2>高清放大</h2></div><p>小图别硬撑大场面，需要高清放大后用于详情页和投放。</p></div>
+        <div class="prompt-v3"><b>输入提示词</b><p>高清放大这张候选图，增强布料纹理和细节，不改变构图和商品样式。</p></div>
+        <div class="case-board-v3"><aside class="case-source-v3"><div class="case-label">输入素材</div><div class="source-stack-v3 single"><figure class="source-card-v3"><div class="source-photo-v3" data-source-base="assets/cases/06-shuru1"></div><figcaption><b>低清候选</b>方向正确但细节不够。</figcaption></figure></div></aside><section class="case-output-v3"><div class="output-head-v3"><span>OUTPUT / 高清交付图</span><span>原图比例</span></div><div class="commerce-long-v3" data-case-base="assets/cases/06-shuchu1"></div></section></div>
+        <div class="speaker-note"><p>方向不对的图先别放大。</p></div>
+      </article>
+
+      <article class="slide case-v3" data-title="扩图" data-chapter="35-48 分钟 | 场景 7" data-kicker="场景 7 / 扩图">
+        <div class="case-titlebar"><div><h2>扩图</h2></div><p>画面不够完整时，把现有商品图或场景图向外延展。</p></div>
+        <div class="prompt-v3"><b>输入提示词</b><p>在不改变商品主体、材质和画面风格的前提下，向外扩展画面。</p></div>
+        <div class="case-board-v3"><aside class="case-source-v3"><div class="case-label">输入素材</div><div class="source-stack-v3 single"><figure class="source-card-v3"><div class="source-photo-v3 is-wide-input" data-source-base="assets/cases/07-shuru1"></div><figcaption><b>原始画面</b>主体可用，但边缘空间不足。</figcaption></figure></div></aside><section class="case-output-v3"><div class="output-head-v3"><span>OUTPUT / 扩图候选</span><span>原图比例</span></div><div class="commerce-long-v3" data-case-base="assets/cases/07-shuchu1"></div></section></div>
+        <div class="speaker-note"><p>扩图重点讲“保持一致”。</p></div>
+      </article>
+
+      <article class="slide case-v3" data-title="多角度图" data-chapter="35-48 分钟 | 场景 8" data-kicker="场景 8 / 多角度图">
+        <div class="case-titlebar"><div><h2>多角度图</h2></div><p>围绕同一商品生成正面、侧面、细节和使用场景等多角度素材。</p></div>
+        <div class="prompt-v3"><b>输入提示词</b><p>基于同一商品，生成多角度展示图，保持颜色、材质、花型和比例一致。</p></div>
+        <div class="case-board-v3"><aside class="case-source-v3"><div class="case-label">输入素材</div><div class="source-stack-v3 single"><figure class="source-card-v3"><div class="source-photo-v3 is-wide-input" data-source-base="assets/cases/08-shuru1"></div><figcaption><b>商品主图</b>确定商品外观、材质和花型。</figcaption></figure></div></aside><section class="case-output-v3"><div class="output-head-v3"><span>OUTPUT / 多角度候选</span><span>原图比例</span></div><div class="commerce-long-v3" data-case-base="assets/cases/08-shuchu1"></div></section></div>
+        <div class="speaker-note"><p>重点讲“一致性”：同一个商品不能每张都变样。</p></div>
+      </article>
+
+      <article class="slide" data-title="批量任务" data-chapter="AI生图 | 批量跑图" data-kicker="批量跑图 / 17">
+        <h2 class="h2">把 AI 安排好，<br>让它先跑<span class="accent">一小时的活</span></h2>
+        <p class="lead">最累的不是生成一张图，是你得一直盯着它生成。批量任务的意义就是：AI 先跑，人回来挑能用的。</p>
+        <div class="batch-board">
+          <div class="panel"><h3 class="panel-title">任务队列</h3><div class="queue"><div class="queue-row"><div class="queue-id">#A014</div><div class="bar"><span style="width:96%"></span></div><div class="queue-status">待审核</div></div><div class="queue-row"><div class="queue-id">#A015</div><div class="bar"><span style="width:82%"></span></div><div class="queue-status">生成中</div></div><div class="queue-row"><div class="queue-id">#A016</div><div class="bar"><span style="width:64%"></span></div><div class="queue-status">生成中</div></div><div class="queue-row"><div class="queue-id">#A017</div><div class="bar"><span style="width:38%"></span></div><div class="queue-status">排队</div></div><div class="queue-row"><div class="queue-id">#A018</div><div class="bar"><span style="width:22%"></span></div><div class="queue-status">排队</div></div></div></div>
+          <div class="panel dark"><h3 class="panel-title">回来以后只做判断</h3><div class="review-grid"><div class="thumb" data-state="留用"></div><div class="thumb" data-state="修一下"></div><div class="thumb" data-state="丢掉"></div><div class="thumb" data-state="留用"></div><div class="thumb" data-state="修一下"></div><div class="thumb" data-state="留用"></div></div></div>
+        </div>
+        <div class="speaker-note"><p>强调无需盯电脑，等 N 个任务跑完回来选图。</p></div>
+      </article>
+
+      <article class="slide" data-title="体验群" data-chapter="AI生图 | 体验群" data-kicker="体验群 / 18">
+        <h2 class="h2">体验群</h2>
+        <p class="lead">扫码加入体验群，领取素材、提示词和后续练习入口。培训结束后，也能继续试、继续问、继续迭代。</p>
+        <div class="practice-layout qr-only">
+          <div class="share-qr-card">
+            <h3>扫码加入体验群</h3>
+            <div class="qr-placeholder" aria-label="体验群二维码"><img src="assets/qr/experience-group.png" alt="扫码加入体验群"></div>
+            <p>进群领取素材包、案例链接和练习入口，后续使用中遇到问题也可以在群里反馈。</p>
+          </div>
+        </div>
+        <div class="speaker-note"><p>最后一页只做体验群引导。</p></div>
+      </article>
+
+      <button class="notes-toggle" id="notesToggle" type="button" aria-label="打开讲师备注" aria-pressed="false">备注 N</button>
+      <aside class="notes-panel" id="notesPanel" aria-live="polite" aria-label="讲师备注">
+        <h2>讲师备注</h2>
+        <div id="notesBody"></div>
+      </aside>
+      <div class="nav-zone left" aria-label="上一页"></div>
+      <div class="nav-zone right" aria-label="下一页"></div>
+      <nav class="hud" aria-label="演示导航">
+        <div class="counter"><strong id="currentPage">01</strong> / <span id="totalPage">19</span></div>
+        <div class="timeline" id="timeline"></div>
+        <div class="chapter" id="chapterLabel">全场 | 培训总纲</div>
+      </nav>
+    </section>
+  </main>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const timeline = document.getElementById("timeline");
+    const currentPage = document.getElementById("currentPage");
+    const totalPage = document.getElementById("totalPage");
+    const chapterLabel = document.getElementById("chapterLabel");
+    const leftZone = document.querySelector(".nav-zone.left");
+    const rightZone = document.querySelector(".nav-zone.right");
+    const notesToggle = document.getElementById("notesToggle");
+    const notesPanel = document.getElementById("notesPanel");
+    const notesBody = document.getElementById("notesBody");
+    const imageExtensions = ["jpg", "png", "jpeg", "webp"];
+
+    let index = 0;
+    let notesOpen = false;
+    totalPage.textContent = String(slides.length).padStart(2, "0");
+    timeline.style.gridTemplateColumns = `repeat(${slides.length}, 1fr)`;
+
+    slides.forEach((slide, i) => {
+      const button = document.createElement("button");
+      button.className = "tick";
+      button.type = "button";
+      button.title = `${String(i + 1).padStart(2, "0")} ${slide.dataset.title}`;
+      button.setAttribute("aria-label", `跳转到第 ${i + 1} 页：${slide.dataset.title}`);
+      button.addEventListener("click", () => show(i));
+      timeline.appendChild(button);
+    });
+
+    const ticks = Array.from(document.querySelectorAll(".tick"));
+
+    function resolveImage(basePath) {
+      return new Promise((resolve) => {
+        let cursor = 0;
+        const tryNext = () => {
+          if (cursor >= imageExtensions.length) {
+            resolve("");
+            return;
+          }
+          const path = `${basePath}.${imageExtensions[cursor]}`;
+          const image = new Image();
+          image.onload = () => resolve(path);
+          image.onerror = () => {
+            cursor += 1;
+            tryNext();
+          };
+          image.src = path;
+        };
+        tryNext();
+      });
+    }
+
+    function wireImages() {
+      document.querySelectorAll("[data-case-base]").forEach(async (node) => {
+        const path = await resolveImage(node.dataset.caseBase);
+        if (path) node.style.setProperty("--case-img", `url("${path}")`);
+      });
+      document.querySelectorAll("[data-source-base]").forEach(async (node) => {
+        const path = await resolveImage(node.dataset.sourceBase);
+        if (path) node.style.setProperty("--source-img", `url("${path}")`);
+      });
+    }
+
+    function syncNotes() {
+      const note = slides[index].querySelector(".speaker-note");
+      notesBody.innerHTML = note ? note.innerHTML : "<p>本页暂无备注。</p>";
+    }
+
+    function setNotesOpen(open) {
+      notesOpen = open;
+      notesPanel.classList.toggle("open", notesOpen);
+      notesToggle.classList.toggle("active", notesOpen);
+      notesToggle.setAttribute("aria-pressed", String(notesOpen));
+      if (notesOpen) syncNotes();
+    }
+
+    function show(nextIndex) {
+      index = Math.max(0, Math.min(slides.length - 1, nextIndex));
+      slides.forEach((slide, i) => slide.classList.toggle("active", i === index));
+      ticks.forEach((tick, i) => {
+        tick.classList.toggle("active", i === index);
+        tick.classList.toggle("past", i < index);
+      });
+      currentPage.textContent = String(index + 1).padStart(2, "0");
+      chapterLabel.textContent = slides[index].dataset.chapter || slides[index].dataset.title;
+      document.title = `${slides[index].dataset.title} | AI生图培训`;
+      syncNotes();
+    }
+
+    function next() { show(index + 1); }
+    function prev() { show(index - 1); }
+
+    document.addEventListener("keydown", (event) => {
+      const forwardKeys = ["ArrowRight", "PageDown", " ", "Enter"];
+      const backKeys = ["ArrowLeft", "PageUp", "Backspace"];
+      const isButtonActivation =
+        event.target instanceof Element &&
+        event.target.closest("button") &&
+        [" ", "Enter"].includes(event.key);
+      if (isButtonActivation) return;
+      if (event.key.toLowerCase() === "n") {
+        event.preventDefault();
+        setNotesOpen(!notesOpen);
+        return;
+      }
+      if (event.key === "Escape" && notesOpen) {
+        event.preventDefault();
+        setNotesOpen(false);
+        return;
+      }
+      if (forwardKeys.includes(event.key)) {
+        event.preventDefault();
+        next();
+      }
+      if (backKeys.includes(event.key)) {
+        event.preventDefault();
+        prev();
+      }
+      if (event.key === "Home") {
+        event.preventDefault();
+        show(0);
+      }
+      if (event.key === "End") {
+        event.preventDefault();
+        show(slides.length - 1);
+      }
+    });
+
+    leftZone.addEventListener("click", prev);
+    rightZone.addEventListener("click", next);
+    notesToggle.addEventListener("click", () => setNotesOpen(!notesOpen));
+
+    wireImages();
+    show(0);
+  </script>
+</body>
+</html>
