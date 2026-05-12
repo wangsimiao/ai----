@@ -1215,6 +1215,37 @@
       gap: 10px;
     }
 
+    .automation-flow {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .flow-step {
+      display: grid;
+      grid-template-columns: 88px 1fr;
+      gap: 12px;
+      align-items: center;
+      min-height: 54px;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .flow-step b {
+      color: var(--lime);
+      font-family: var(--mono);
+      font-size: clamp(13px, 0.95vw, 16px);
+    }
+
+    .flow-step span {
+      color: #f7f9ff;
+      font-size: clamp(15px, 1.1vw, 20px);
+      line-height: 1.32;
+      font-weight: 760;
+    }
+
     .thumb {
       position: relative;
       min-height: 120px;
@@ -1414,7 +1445,7 @@
           <div class="agenda-item subitem"><div class="agenda-time">2.2</div><div class="agenda-name">破冰与用户价值：AI 生图使用痛点，以及为什么需要这个工具</div><div class="speaker">痛点共识 / 价值说明</div></div>
           <div class="agenda-item subitem"><div class="agenda-time">2.3</div><div class="agenda-name">高频用户分享：@森屿 讲真实使用比例、一次可用率、优点和问题</div><div class="speaker">真实反馈</div></div>
           <div class="agenda-item subitem"><div class="agenda-time">2.4</div><div class="agenda-name">8 个高频场景：商品替换、画芯替换、人物融合、买家秀、瑕疵修复、高清放大、扩图、多角度图</div><div class="speaker">场景拆解</div></div>
-          <div class="agenda-item subitem"><div class="agenda-time">2.5</div><div class="agenda-name">批量任务：无需盯电脑，等任务跑完回来选图</div><div class="speaker">少加班</div></div>
+          <div class="agenda-item subitem"><div class="agenda-time">2.5</div><div class="agenda-name">批量任务：系统队列与 n8n + 飞书自动跑图</div><div class="speaker">两种模式</div></div>
           <div class="agenda-item subitem"><div class="agenda-time">2.6</div><div class="agenda-name">体验群：扫码进群，领取素材和后续练习入口</div><div class="speaker">持续体验</div></div>
         </div>
       </article>
@@ -1646,13 +1677,13 @@
       </article>
 
       <article class="slide" data-title="批量任务" data-chapter="AI生图 | 批量跑图" data-kicker="批量跑图 / 17">
-        <h2 class="h2">把 AI 安排好，<br>让它先跑<span class="accent">一小时的活</span></h2>
-        <p class="lead">最累的不是生成一张图，是你得一直盯着它生成。批量任务的意义就是：AI 先跑，人回来挑能用的。</p>
+        <h2 class="h2">批量跑图有两种模式：<br><span class="accent">系统队列 / n8n 自动执行</span></h2>
+        <p class="lead">最累的不是生成一张图，是你得一直盯着它生成。把任务发出去，AI 先跑，人回来挑能用的。</p>
         <div class="batch-board">
-          <div class="panel"><h3 class="panel-title">任务队列</h3><div class="queue"><div class="queue-row"><div class="queue-id">#A014</div><div class="bar"><span style="width:96%"></span></div><div class="queue-status">待审核</div></div><div class="queue-row"><div class="queue-id">#A015</div><div class="bar"><span style="width:82%"></span></div><div class="queue-status">生成中</div></div><div class="queue-row"><div class="queue-id">#A016</div><div class="bar"><span style="width:64%"></span></div><div class="queue-status">生成中</div></div><div class="queue-row"><div class="queue-id">#A017</div><div class="bar"><span style="width:38%"></span></div><div class="queue-status">排队</div></div><div class="queue-row"><div class="queue-id">#A018</div><div class="bar"><span style="width:22%"></span></div><div class="queue-status">排队</div></div></div></div>
-          <div class="panel dark"><h3 class="panel-title">回来以后只做判断</h3><div class="review-grid"><div class="thumb" data-state="留用"></div><div class="thumb" data-state="修一下"></div><div class="thumb" data-state="丢掉"></div><div class="thumb" data-state="留用"></div><div class="thumb" data-state="修一下"></div><div class="thumb" data-state="留用"></div></div></div>
+          <div class="panel"><h3 class="panel-title">模式一：系统内排队执行</h3><p class="panel-copy">在系统中一次发出多个生图任务，自动排队、自动执行，回来统一看结果。</p><div class="queue"><div class="queue-row"><div class="queue-id">#A014</div><div class="bar"><span style="width:96%"></span></div><div class="queue-status">待审核</div></div><div class="queue-row"><div class="queue-id">#A015</div><div class="bar"><span style="width:82%"></span></div><div class="queue-status">生成中</div></div><div class="queue-row"><div class="queue-id">#A016</div><div class="bar"><span style="width:64%"></span></div><div class="queue-status">生成中</div></div><div class="queue-row"><div class="queue-id">#A017</div><div class="bar"><span style="width:38%"></span></div><div class="queue-status">排队</div></div><div class="queue-row"><div class="queue-id">#A018</div><div class="bar"><span style="width:22%"></span></div><div class="queue-status">排队</div></div></div></div>
+          <div class="panel dark"><h3 class="panel-title">模式二：n8n 接飞书自动执行</h3><p class="panel-copy">在飞书里发出 gogogo，n8n 接收指令后，在多维表格中按行自动执行生图任务。</p><div class="automation-flow"><div class="flow-step"><b>FEISHU</b><span>飞书发出 gogogo</span></div><div class="flow-step"><b>N8N</b><span>接收指令并触发工作流</span></div><div class="flow-step"><b>TABLE</b><span>多维表格逐行自动执行</span></div><div class="flow-step"><b>REVIEW</b><span>任务跑完后回来集中选图</span></div></div></div>
         </div>
-        <div class="speaker-note"><p>强调无需盯电脑，等 N 个任务跑完回来选图。</p></div>
+        <div class="speaker-note"><p>强调两种批量跑图：系统内多任务排队，以及飞书发 gogogo 后由 n8n 驱动多维表格自动执行。</p></div>
       </article>
 
       <article class="slide" data-title="体验群" data-chapter="AI生图 | 体验群" data-kicker="体验群 / 18">
