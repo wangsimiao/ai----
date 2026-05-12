@@ -227,116 +227,354 @@
     }
 
     .leader-blue {
+      color: #1b2738;
       background:
-        radial-gradient(circle at 84% 8%, rgba(80, 243, 255, 0.2), transparent 22%),
-        linear-gradient(180deg, rgba(9, 46, 95, 0.95), rgba(8, 12, 18, 0.92));
+        linear-gradient(90deg, rgba(12, 76, 156, 0.08) 1px, transparent 1px),
+        linear-gradient(rgba(12, 76, 156, 0.08) 1px, transparent 1px),
+        #f4f7fb;
+      background-size: 36px 36px;
     }
 
-    .opportunity-stack,
-    .path-cards,
-    .employee-grid {
-      display: grid;
-      gap: 13px;
-      margin-top: 3%;
+    .leader-blue::before {
+      color: #0b4c9c;
+      font-weight: 800;
     }
 
-    .opportunity-stack { max-width: 78%; }
-    .path-cards { grid-template-columns: repeat(5, 1fr); }
-    .employee-grid { grid-template-columns: repeat(2, 1fr); max-width: 58%; margin-left: auto; margin-top: -22%; }
-
-    .opp-layer,
-    .path-card,
-    .employee-item {
-      border: 1px solid rgba(255,255,255,0.16);
-      border-radius: var(--radius);
-      padding: 16px;
-      background: rgba(255,255,255,0.07);
+    .leader-blue::after {
+      display: none;
     }
 
-    .opp-layer {
-      display: grid;
-      grid-template-columns: 44px 1fr auto;
-      align-items: center;
-      gap: 14px;
-      min-height: 74px;
+    .ref-logo {
+      position: absolute;
+      right: 6%;
+      top: 6.2%;
+      color: #29415e;
+      font-weight: 900;
+      font-size: clamp(13px, 1vw, 18px);
+      letter-spacing: 0;
     }
 
-    .opp-icon,
-    .path-num {
-      display: grid;
-      place-items: center;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      color: #081014;
-      background: var(--lime);
-      font-family: var(--mono);
+    .ref-logo span {
+      margin-left: 14px;
+      color: #9b1e2d;
+    }
+
+    .ref-title {
+      margin: 5.8% 0 0;
+      color: #111827;
+      font-size: clamp(28px, 2.55vw, 46px);
+      line-height: 1.1;
       font-weight: 900;
     }
 
-    .opp-title,
-    .path-card h3,
-    .employee-item h3 {
-      margin: 0 0 6px;
-      color: #fff;
-      font-size: clamp(16px, 1.35vw, 24px);
-      font-weight: 850;
-    }
-
-    .opp-sub,
-    .path-card p,
-    .employee-item p {
+    .ref-kicker {
       display: block;
-      margin: 0;
-      color: var(--muted);
-      font-size: clamp(11px, 0.9vw, 15px);
-      line-height: 1.45;
-    }
-
-    .opp-level {
-      color: var(--cyan);
+      margin-bottom: 8px;
+      color: #34495e;
       font-family: var(--mono);
-      font-size: 12px;
+      font-size: clamp(11px, 0.9vw, 14px);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
 
-    .concept-hero {
-      margin-top: 3%;
+    .ref-frame {
+      position: relative;
+      margin-top: 2.8%;
+      min-height: 65%;
+      border: 2px solid rgba(17, 24, 39, 0.6);
+      background: rgba(255,255,255,0.72);
+      box-shadow: 0 22px 50px rgba(31, 58, 98, 0.12);
+    }
+
+    .opp-ref {
+      padding: 7.2% 5.6% 4.8% 12%;
+    }
+
+    .opp-axis {
+      position: absolute;
+      left: 5%;
+      top: 22%;
+      bottom: 18%;
       display: grid;
-      grid-template-columns: 0.42fr 60px 1fr;
-      gap: 20px;
+      place-items: center;
+      width: 42px;
+      border-left: 1px solid #c7d2df;
+      color: #34495e;
+      font-size: clamp(11px, 0.86vw, 14px);
+      writing-mode: vertical-rl;
+      letter-spacing: 0.08em;
+    }
+
+    .opp-bars {
+      display: grid;
+      justify-items: end;
+      align-content: center;
+      gap: 16px;
+      height: 100%;
+    }
+
+    .opp-bar {
+      display: grid;
+      grid-template-columns: 58px 1fr auto;
+      align-items: center;
+      gap: 22px;
+      min-height: 86px;
+      padding: 14px 24px;
+      border-radius: 10px;
+      color: #fff;
+      background: linear-gradient(180deg, #0b62b5, #044482);
+      box-shadow: 0 10px 22px rgba(6, 58, 116, 0.2);
+    }
+
+    .opp-bar.top { width: 66%; margin-right: 12%; background: linear-gradient(180deg, #003a86, #002e70); }
+    .opp-bar.mid { width: 82%; margin-right: 5%; background: linear-gradient(180deg, #0b70bb, #065a9b); }
+    .opp-bar.base { width: 96%; background: linear-gradient(180deg, #77b8db, #4b98c5); }
+
+    .opp-icon {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.16);
+      font-size: 28px;
+    }
+
+    .opp-main {
+      font-size: clamp(22px, 2vw, 36px);
+      font-weight: 900;
+      line-height: 1.1;
+    }
+
+    .opp-main span {
+      display: block;
+      margin-top: 6px;
+      font-size: clamp(12px, 0.9vw, 16px);
+      font-weight: 700;
+      opacity: 0.9;
+    }
+
+    .opp-pill {
+      padding: 8px 13px;
+      border-radius: 999px;
+      color: #16304f;
+      background: rgba(255,255,255,0.86);
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .opp-foot {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 14px;
+      color: #4b5563;
+      text-align: center;
+      font-size: 11px;
+    }
+
+    .path-ref {
+      padding: 6.4% 4.6% 7.6%;
+    }
+
+    .path-steps {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      align-items: end;
+      gap: 18px;
+      height: 100%;
+    }
+
+    .path-steps::after {
+      content: "";
+      position: absolute;
+      left: 1%;
+      right: 0;
+      bottom: 11%;
+      height: 28%;
+      border-bottom: 18px solid #0a5ea8;
+      border-right: 26px solid #0a5ea8;
+      border-radius: 0 0 80% 80%;
+      transform: skewX(-16deg);
+      opacity: 0.95;
+      z-index: 0;
+    }
+
+    .path-step {
+      position: relative;
+      z-index: 1;
+      min-height: 210px;
+      padding-left: 14px;
+      border-left: 2px solid #7a8796;
+      color: #111827;
+    }
+
+    .path-step:nth-child(1) { transform: translateY(58px); }
+    .path-step:nth-child(2) { transform: translateY(34px); }
+    .path-step:nth-child(3) { transform: translateY(10px); }
+    .path-step:nth-child(4) { transform: translateY(-18px); }
+    .path-step:nth-child(5) { transform: translateY(-48px); }
+
+    .path-num {
+      display: grid;
+      place-items: center;
+      width: 54px;
+      height: 34px;
+      margin-bottom: 18px;
+      border-radius: 999px;
+      color: #fff;
+      background: #0d64ad;
+      box-shadow: 0 4px 12px rgba(13, 100, 173, 0.28);
+      font-weight: 900;
+    }
+
+    .path-step h3 {
+      margin: 0 0 12px;
+      color: #1f2937;
+      font-size: clamp(17px, 1.35vw, 24px);
+      font-weight: 900;
+    }
+
+    .path-step p {
+      margin: 0;
+      color: #374151;
+      font-size: clamp(10px, 0.78vw, 13px);
+      line-height: 1.55;
+    }
+
+    .concept-cover {
+      margin-top: 5.6%;
+      border: 2px solid rgba(17, 24, 39, 0.5);
+      background: #fff;
+    }
+
+    .concept-banner {
+      display: grid;
+      place-items: center;
+      height: 225px;
+      color: #fff;
+      background:
+        linear-gradient(180deg, rgba(23, 69, 122, 0.94), rgba(15, 82, 148, 0.9)),
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.18), transparent 30%);
+      font-size: clamp(46px, 5.6vw, 92px);
+      font-weight: 900;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.28);
+    }
+
+    .concept-subtitle {
+      display: grid;
+      place-items: center;
+      height: 84px;
+      color: #1f2937;
+      font-size: clamp(18px, 1.6vw, 28px);
+      font-weight: 700;
+      background: #f8fafc;
+    }
+
+    .concept-ref {
+      padding: 3.5% 5.4% 4.4%;
+    }
+
+    .concept-ref h2 {
+      margin: 0 0 4px;
+      color: #111827;
+      font-size: clamp(24px, 2.1vw, 38px);
+      font-weight: 900;
+    }
+
+    .concept-ref > p {
+      margin: 0 0 24px;
+      color: #374151;
+      font-size: clamp(12px, 0.9vw, 15px);
+    }
+
+    .concept-flow {
+      display: grid;
+      grid-template-columns: 0.42fr 90px 0.58fr;
+      gap: 18px;
       align-items: center;
     }
 
-    .concept-card {
+    .concept-left {
       display: grid;
-      gap: 14px;
+      gap: 22px;
     }
 
     .concept-box {
-      border: 1px solid rgba(255,255,255,0.16);
-      border-radius: var(--radius);
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 14px;
+      min-height: 118px;
       padding: 18px;
-      background: rgba(255,255,255,0.07);
+      border: 2px solid #b8c1cc;
+      border-radius: 12px;
+      color: #1f2937;
+      background: #fff;
     }
 
     .concept-box strong {
       display: block;
-      margin-bottom: 8px;
-      color: var(--lime);
-      font-size: clamp(18px, 1.6vw, 28px);
+      margin-bottom: 6px;
+      color: #111827;
+      font-size: clamp(17px, 1.3vw, 24px);
     }
 
     .concept-box p {
       margin: 0;
-      color: var(--muted);
+      color: #374151;
+      font-size: clamp(11px, 0.84vw, 14px);
       line-height: 1.5;
     }
 
+    .concept-icon {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      color: #fff;
+      background: #174f93;
+      font-size: 22px;
+    }
+
     .concept-arrow {
-      color: var(--cyan);
-      font-family: var(--mono);
-      font-size: clamp(36px, 4vw, 70px);
+      color: #0a5ea8;
+      font-size: clamp(72px, 7vw, 128px);
       font-weight: 900;
+      text-align: center;
+    }
+
+    .employee-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      padding: 18px;
+      border: 2px solid #9aa7b7;
+      background: #f7f9fc;
+    }
+
+    .employee-item {
+      min-height: 108px;
+      padding: 14px;
+      color: #1f2937;
+      background: #eef3f8;
+      border: 1px solid #d0d9e4;
+    }
+
+    .employee-item h3 {
+      margin: 0 0 8px;
+      color: #174f93;
+      font-size: clamp(15px, 1.12vw, 20px);
+      font-weight: 900;
+    }
+
+    .employee-item p {
+      margin: 0;
+      color: #374151;
+      font-size: clamp(10px, 0.78vw, 13px);
+      line-height: 1.45;
     }
 
     .takeaway-slide .h2 {
@@ -1199,43 +1437,93 @@
       </article>
 
       <article class="slide leader-blue" data-title="三层机会论" data-chapter="领导AI情况 | 战略篇" data-kicker="战略篇 / 01">
-        <h2 class="h2">战略篇：<br><span class="accent">AI 的三层机会论</span></h2>
-        <p class="lead">AI 不只是一批工具，它会从个人提效开始，进入组织流程升级，最后改变商业模式。越往上，价值密度越高，革新难度也越高。</p>
-        <div class="opportunity-stack">
-          <div class="opp-layer"><div class="opp-icon">3</div><div><div class="opp-title">第三层：商业模式革新</div><span class="opp-sub">新服务 / 新产品 / 新增长曲线</span></div><div class="opp-level">Business</div></div>
-          <div class="opp-layer"><div class="opp-icon">2</div><div><div class="opp-title">第二层：组织流程升级</div><span class="opp-sub">SOP 自动化 / 系统化协同</span></div><div class="opp-level">System</div></div>
-          <div class="opp-layer"><div class="opp-icon">1</div><div><div class="opp-title">第一层：员工个人提效</div><span class="opp-sub">工具使用者 / 生产力倍增</span></div><div class="opp-level">Base</div></div>
+        <div class="ref-logo">AI重构组织</div>
+        <h2 class="ref-title"><span class="ref-kicker">STRATEGIC OPPORTUNITY</span>战略篇｜三层机会论</h2>
+        <div class="ref-frame opp-ref">
+          <div class="opp-axis">价值密度与革新难度递增</div>
+          <div class="opp-bars">
+            <div class="opp-bar top">
+              <div class="opp-icon">♛</div>
+              <div class="opp-main">第三层：新商业模式<span>人近一平 · 简图式创新</span></div>
+              <div class="opp-pill">Top Level</div>
+            </div>
+            <div class="opp-bar mid">
+              <div class="opp-icon">⚙</div>
+              <div class="opp-main">第二层：组织流程升级<span>SOP自动化 · 系统化协同</span></div>
+              <div class="opp-pill">System Level</div>
+            </div>
+            <div class="opp-bar base">
+              <div class="opp-icon">◉</div>
+              <div class="opp-main">第一层：员工个人提效<span>工具使用者 · 生产力倍增</span></div>
+              <div class="opp-pill">Base Level</div>
+            </div>
+          </div>
+          <div class="opp-foot">从个体组装到组织化协同的必经路径</div>
         </div>
         <div class="speaker-note"><p>不要把它讲成概念课，要落到“个人、流程、模式”三层。</p></div>
       </article>
 
       <article class="slide leader-blue" data-title="应用路径" data-chapter="领导AI情况 | 普及路径" data-kicker="应用路径 / 02">
-        <h2 class="h2">系统化探索并普及<br><span class="accent">AI 应用的建议路径</span></h2>
-        <p class="lead">不要一上来就追最复杂的智能体。先理解大模型，再学会提示词，再搭智能体和工作流，最后沉淀成可复用的 Skill。</p>
-        <div class="path-cards">
-          <div class="path-card"><div class="path-num">1</div><h3>AI 大模型</h3><p>知道主流模型能做什么，适合什么场景。</p></div>
-          <div class="path-card"><div class="path-num">2</div><h3>提示词撰写</h3><p>把任务、边界、输出格式说清楚。</p></div>
-          <div class="path-card"><div class="path-num">3</div><h3>智能体搭建</h3><p>基于岗位场景创建个性化智能体。</p></div>
-          <div class="path-card"><div class="path-num">4</div><h3>工作流搭建</h3><p>把常见 SOP 变成可复用流程。</p></div>
-          <div class="path-card"><div class="path-num">5</div><h3>Skill 制作</h3><p>把成熟经验沉淀成岗位能力。</p></div>
+        <div class="ref-logo">布道教育 <span>龙道集团</span></div>
+        <h2 class="ref-title">系统化探索并普及AI应用的建议路径</h2>
+        <div class="ref-frame path-ref">
+          <div class="path-steps">
+            <div class="path-step">
+              <div class="path-num">1</div>
+              <h3>AI大模型</h3>
+              <p>有哪些主流模型？哪些模型能做图？不同应用场景最常用的模型是什么？</p>
+            </div>
+            <div class="path-step">
+              <div class="path-num">2</div>
+              <h3>提示词撰写</h3>
+              <p>用户提示词撰写，系统提示词撰写，把任务说清楚。</p>
+            </div>
+            <div class="path-step">
+              <div class="path-num">3</div>
+              <h3>智能体搭建</h3>
+              <p>本地搭建各类智能体，基于自身业务场景需求创建个性化智能体。</p>
+            </div>
+            <div class="path-step">
+              <div class="path-num">4</div>
+              <h3>工作流搭建</h3>
+              <p>学会搭建工作流，基于团队业务需求和业务 SOP 搭建适用于自己的工作流。</p>
+            </div>
+            <div class="path-step">
+              <div class="path-num">5</div>
+              <h3>Skill制作</h3>
+              <p>掌握自己的工作方法论和 SOP，并转化为 Skill，由 Skill 代替员工执行。</p>
+            </div>
+          </div>
         </div>
         <div class="speaker-note"><p>重点是“从认知到沉淀”，给后面的 AI 生图做铺垫。</p></div>
       </article>
 
       <article class="slide leader-blue" data-title="AI数字员工" data-chapter="领导AI情况 | 概念解析" data-kicker="概念解析 / 03">
-        <h2 class="h2">概念解析：<br><span class="accent">从 AI 大模型到 AI 数字员工</span></h2>
-        <p class="lead">大模型是聪明的大脑，但真正能落地的数字员工，还要有岗位知识、工作记忆、手脚工具和规范流程。</p>
-        <div class="concept-hero">
-          <div class="concept-card">
-            <div class="concept-box"><strong>AI 大模型</strong><p>像刚毕业的高智商博士，什么都会一点，但不懂你的生意、货品和内部流程。</p></div>
-            <div class="concept-box"><strong>AI 数字员工</strong><p>给博士配上手脚、企业知识和岗位 SOP，变成能嵌入公司协作的非实体员工。</p></div>
-          </div>
-          <div class="concept-arrow">→</div>
-          <div class="employee-grid">
-            <div class="employee-item"><h3>岗位沉淀</h3><p>知道这个岗位要处理什么问题。</p></div>
-            <div class="employee-item"><h3>工作记忆</h3><p>记住产品信息、品牌手册和项目背景。</p></div>
-            <div class="employee-item"><h3>手脚工具</h3><p>能调用工具，不只是聊天。</p></div>
-            <div class="employee-item"><h3>规范流程</h3><p>按工作流和 SOP 做事。</p></div>
+        <div class="concept-cover">
+          <div class="concept-banner">概念解析</div>
+          <div class="concept-subtitle">人人可落地的“AI数字员工”</div>
+        </div>
+        <div class="ref-frame concept-ref">
+          <h2>从AI大模型到AI数字员工</h2>
+          <p>AI大模型已经非常聪明了，难道大模型本身不就可以当做一个员工吗？</p>
+          <div class="concept-flow">
+            <div class="concept-left">
+              <div class="concept-box">
+                <div class="concept-icon">◇</div>
+                <div><strong>AI大模型</strong><p>刚毕业的哈佛博士，智商很高、什么都会，但不懂你的生意，没有过你的货品，更不清楚内部流程。</p></div>
+              </div>
+              <div class="concept-box">
+                <div class="concept-icon">♙</div>
+                <div><strong>AI数字员工</strong><p>给博士配上手脚、企业知识和岗位工作 SOP，它不再是个聊天软件，而是能嵌入公司内某个岗位的非实体员工。</p></div>
+              </div>
+            </div>
+            <div class="concept-arrow">→</div>
+            <div class="employee-grid">
+              <div class="employee-item"><h3>岗位沉淀</h3><p>知道这个岗位要处理什么问题、遵守什么规则。</p></div>
+              <div class="employee-item"><h3>工作记忆</h3><p>产品信息、品牌手册、项目背景、历史上下文和企业知识。</p></div>
+              <div class="employee-item"><h3>手脚工具</h3><p>Skill / MCP / RPA 等工具，让它能干实事。</p></div>
+              <div class="employee-item"><h3>规范流程</h3><p>工作流和 SOP，不乱发挥，稳定产出。</p></div>
+            </div>
           </div>
         </div>
         <div class="speaker-note"><p>重点讲清楚大模型和数字员工的区别。</p></div>
